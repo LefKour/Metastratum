@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import NavBar from '@/app/components/NavBar';
+import Footer from '@/app/components/Footer';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
@@ -25,10 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <NavBar />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}>
+        className={`${spaceGrotesk.variable} antialiased w-screen h-screen`}>
+        <NavBar />
         {children}
+        <Footer />
       </body>
     </html>
   );

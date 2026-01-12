@@ -75,14 +75,19 @@ const fragmentShader = `
                 return n;
             }
 
-            float ridgeFbm(vec2 p) {
+            float ridgeFbm(vec2 p, float timeOffset) {
                 float value = 0.0;
                 float amplitude = 1.0;
                 float frequency = 1.0;
                 float weight = 1.0;
 
                 for(int i = 0; i < 5; i++) {
-                    float n = ridgeNoise(p * frequency);
+                    vec2 timeVarying = p * frequency + vec2(
+                        snoise(vec2(timeOffset * 3.0 + float(i) * 10.0, 0.0)) * 0.3,
+                        snoise(vec2(0.0, timeOffset * 3.0 + float(i) * 10.0)) * 0.3
+                    );
+
+                    float n = ridgeNoise(timeVarying);
                     n *= weight;
                     weight = n;
 
@@ -109,29 +114,23 @@ const fragmentShader = `
                 noiseCoord.y *= 0.25; 
 
                 float timeOffset = uTime * uAnimSpeed;
-                vec2 offset1 = vec2(
-                    snoise(vec2(timeOffset * 0.5, 0.0)) * 8.0,
-                    snoise(vec2(0.0, timeOffset * 0.5)) * 0.2
-                );
-                
-                vec2 offset2 = vec2(
-                    snoise(vec2(timeOffset * 0.3 + 100.0, 0.0)) * 5.0,
-                    snoise(vec2(0.0, timeOffset * 0.3 + 100.0)) * 0.15
-                );
 
-                noiseCoord += offset1 * 0.6 + offset2 * 0.4;
+                noiseCoord.x += timeOffset * 2.0;
 
-                float height = ridgeFbm(noiseCoord);
+                float height = ridgeFbm(noiseCoord, timeOffset);
 
                 height = pow(height, 2.0);
                 height = smoothstep(0.2, 0.95, height);
 
                 vec2 mouseDistance = uv - uMouse;
-                mouseDistance.x *= aspect; // Correct for aspect ratio
+                mouseDistance.x *= aspect;
                 float distToMouse = length(mouseDistance);
-                float mouseEffect = uMouseInfluence * exp(-distToMouse * 4.0); // Exponential falloff - lower = larger area
 
-                height = clamp(height + mouseEffect * 0.5, 0.0, 1.0);
+                float brushRadius = 0.5;
+                float falloffStart = 0.05;
+                float mouseEffect = uMouseInfluence * (1.0 - smoothstep(falloffStart, brushRadius, distToMouse));
+
+                height = clamp(height + mouseEffect * 0.8, 0.0, 1.0);
 
                 if (height < uThreshold) {
                     discard;
@@ -140,7 +139,7 @@ const fragmentShader = `
                 vec2 centerOffset = cellUV - vec2(0.5);
                 float dist = length(centerOffset);
 
-                float radius = uCircleSize; // Fixed circle size
+                float radius = uCircleSize * height;
 
                 float circle = 1.0 - smoothstep(radius - 0.02, radius + 0.02, dist);
 
@@ -194,8 +193,8 @@ const InteractiveHeightmapGrid = () => {
             uResolution: { value: new THREE.Vector2(width, height) },
             uCircleSize: { value: 0.125 },
             uCircleSpacing: { value: 15.0 },
-            uAnimSpeed: { value: 0.025 },
-            uThreshold: { value: 0.0 },
+            uAnimSpeed: { value: 0.01 },
+            uThreshold: { value: 0.5 },
             uMouse: { value: new THREE.Vector2(0.5, 0.5) },
             uMouseInfluence: { value: 1 }
         },

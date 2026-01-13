@@ -2,6 +2,7 @@
 
 import {Github, Info} from 'lucide-react';
 import { useAppStore } from '@/stores/store';
+import Link from 'next/link';
 
 interface NavBarButtonProps {
   children: React.ReactNode;
@@ -27,7 +28,7 @@ const NavBar = () => {
   return (
     <div className="absolute flex w-full py-10 px-10 justify-start md:justify-center items-center">
       {/*Logo*/}
-      <h2 className="text-2xl font-bold">METASTRATUM</h2>
+      <Link href={"/"} className="text-2xl font-bold">METASTRATUM</Link>
 
       {/*Buttons*/}
       <div className="absolute right-10 flex items-center gap-4">

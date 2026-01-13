@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import * as THREE from 'three';
 
 const vertexShader = `
@@ -164,6 +164,7 @@ const fragmentShader = `
 
 const InteractiveHeightmapGrid = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -254,6 +255,8 @@ const InteractiveHeightmapGrid = () => {
 
     animate(0);
 
+    setTimeout(() => setIsLoaded(true), 100);
+
     return () => {
         cancelAnimationFrame(animationFrameId);
         window.removeEventListener('resize', handleResize);
@@ -270,7 +273,12 @@ const InteractiveHeightmapGrid = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-2/3 absolute top-1/2 left-0 -translate-y-1/2" />
+    <div
+      ref={containerRef}
+      className={`w-full h-2/3 absolute top-1/2 left-0 -translate-y-1/2 transition-all duration-1000 ease-out ${
+        isLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-md'
+      }`}
+    />
   );
 };
 

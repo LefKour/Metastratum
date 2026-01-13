@@ -23,7 +23,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@/app': path.resolve(__dirname, './src/app'),
-      '@/components': path.resolve(__dirname, './src/components'),
+      '@/components': path.resolve(__dirname, './src/(components)'),
       '@/core': path.resolve(__dirname, './src/core'),
       '@/map': path.resolve(__dirname, './src/map'),
       '@/terrain': path.resolve(__dirname, './src/terrain'),

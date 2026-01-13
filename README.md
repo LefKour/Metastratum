@@ -116,7 +116,7 @@ metastratum/
 TypeScript path aliases are configured for clean imports:
 
 ```typescript
-import { Component } from '@/components/Component';
+import { Component } from '@/(components)/Component';
 import { analyzeSlope } from '@/analysis/elevation/slope';
 import { TerrainMesh } from '@/terrain/mesh';
 import { MapView } from '@/map/MapView';
